@@ -8,11 +8,11 @@ for (i = dirFiles.length - 1; i >= 0; i--) {
     if (dirFiles[i].contains(fluorSubtsr)) {
         fluorImg = dirFiles[i];
         brfldImg = dirFiles[i].replace(fluorSubtsr, brfldSubstr);
-        open(fluorImg);
+        open(imageDir + "/" + fluorImg);
         run("Split Channels");
         fluorChannelImg = closeChannelsExcept(
             substr2RGBchannel(fluorSubtsr), fluorImg);
-        open(brfldImg);
+        open(imageDir + "/" + brfldImg);
         run("Merge Channels...", "c1=" + fluorChannelImg + " c2=" + brfldImg + " create");
         setMetadata("dirPath", imageDir);
         rename(brfldImg);
