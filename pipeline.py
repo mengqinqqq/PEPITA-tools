@@ -6,6 +6,7 @@ import numpy as np
 import os
 from matplotlib.ticker import PercentFormatter
 import matplotlib.pyplot as plt
+from pathlib import Path
 import re
 import seaborn as sns
 import sys
@@ -23,6 +24,10 @@ ABS_MAX = int(util.get_config('absolute_max_ototox'))
 ABS_MIN = int(util.get_config('absolute_min_ototox'))
 ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 NUMS = [str(n) for n in range(1, 99)]
+
+def adjust_absolute_filename(filename):
+	filepath = Path(filename)
+	return filepath.parent.joinpath(filepath.stem + '_absolute' + filepath.suffix)
 
 def generate_plate_schematic(schematic, results, conversions=None, plate_info='[Unknown]',
 		scale=None, well_count=96, cmap='mako', max_val=100):
@@ -124,7 +129,7 @@ def main(imagefiles, cap=-1, chartfile=None, checkerboard=False, conversions=[],
 	schematic = analyze.get_schematic(platefile, len(imagefiles), plate_ignore, flat=False)
 
 	if absolute_chart:
-		abs_chartfile = None if chartfile is None else chartfile.replace('.', '_absolute.')
+		abs_chartfile = adjust_absolute_filename(chartfile)
 		results2 = absolute.main(imagefiles, cap=cap, chartfile=abs_chartfile, debug=0,
 			group_regex=group_regex, platefile=platefile, plate_control=plate_control,
 			plate_ignore=plate_ignore, silent=False)
