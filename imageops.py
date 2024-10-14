@@ -11,8 +11,26 @@ import warnings
 
 import util
 
-LOG_DIR = f'{util.get_config("log_dir")}/imageops'
-os.makedirs(LOG_DIR, exist_ok=True)
+base_log_dir = util.get_config('log_dir')
+
+if base_log_dir == '/path/to/log/dir':
+	raise ValueError((
+		'Your log_dir configuration is not set. Please provide a log_dir value in config-ext.ini '
+		'so this package knows where to write relevant files. See '
+		'https://github.com/ma-lab-cgidr/PEPITA-tools?tab=readme-ov-file#configuration-file '
+		'for more details.'
+	))
+
+LOG_DIR = f'{base_log_dir}/imageops'
+try:
+	os.makedirs(LOG_DIR, exist_ok=True)
+except OSError as ose:
+	raise ValueError((
+		'Your log_dir configuration points to a location that can\'t be properly written to. See '
+		'https://github.com/ma-lab-cgidr/PEPITA-tools?tab=readme-ov-file#configuration-file '
+		'for details on configurations, and see the chained error for more details on the specific '
+		'problem.'
+	)) from ose
 
 def apply_mask(img, mask):# mask should have black background, white foreground
 	img_type = _get_bit_depth(img)
